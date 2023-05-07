@@ -8,25 +8,13 @@ output: html_document
 ```{r setup, include=FALSE}
 knitr::opts_chunk$set(echo = TRUE)
 ```
-
-## Overview
 This is Coursera’s Practical Machine Learning course Final Project Report.
-
-    * We will use data from accelerometers on the belt, forearm, arm, and dumbell of six participants in this experiment to forecast how they will perform the workout. In the training set, this is the “classe” variable. We have four models that we train: On the training set, k-folds cross validation was used to test Decision Tree, Random Forest, Gradient Boosted Trees, and Support Vector Machine. The accuracy and out of sample error rate are then calculated using a validation set randomly selected from the training csv data. We choose the best model based on those data and apply it to forecast 20 cases using the test csv set. 
 
 ## Background
 Using devices such as Jawbone Up, Nike FuelBand, and Fitbit it is now possible to collect a large amount of data about personal activity relatively inexpensively. These type of devices are part of the quantified self movement - a group of enthusiasts who take measurements about themselves regularly to improve their health, to find patterns in their behavior, or because they are tech geeks. One thing that people regularly do is quantify how much of a particular activity they do, but they rarely quantify how well they do it. In this project, your goal will be to use data from accelerometers on the belt, forearm, arm, and dumbell of 6 participants. They were asked to perform barbell lifts correctly and incorrectly in 5 different ways. More information is available from the website here: (http://groupware.les.inf.puc-rio.br/har) (see the section on the Weight Lifting Exercise Dataset).
 
-The training data for this project are available here:
-
-https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv
-
-The test data are available here:
-
-https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv
-
-The data for this project come from this source: http://web.archive.org/web/20161224072740/http:/groupware.les.inf.puc-rio.br/har. If you use the document you create for this class for any purpose please cite them as they have been very generous in allowing their data to be used for this kind of assignment.
-
+## Objective
+The project requires that a prediction be made of the manner in which the experiments subjects performed the exercises. Different models will be tested to select the one with the higher level of accuracy and apply it to the predetermined test data set as well as to the twent y exercises of the final quiz.
 
 ## Environment preparation, install required packages
 ```{r, message=FALSE}
@@ -47,7 +35,7 @@ library(magrittr)
 library(xgboost)
 ```
 
-## Load Data and remove #DIV/0 and NA elements
+## Load Data and replace #DIV/0 elements and empty strings witn NA.
 ```{r}
 train <- read.csv("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv", 
                           na.strings=c('#DIV/0', '', 'NA') ,stringsAsFactors = FALSE)
@@ -56,7 +44,7 @@ test <- read.csv("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testin
 dim(train)
 dim(test)
 ```
-#### Keep original datasets
+#### Keep original datasets to preserve data integrity
 ```{r}
 train1 <- train
 test1 <- test
@@ -66,6 +54,8 @@ test1 <- test
 ```{r}
 missmap(train, main = "Missing values map - train")
 ```
+
+There is a substantial number of missing data that must be removed.
 
 #### 1) Remove NA elements
 ```{r}
@@ -87,10 +77,10 @@ train1 <- train1[,-c(1:7)]
 dim(train1)
 ```
 
-### Create and validate the models
+## Create and validate the models
 Split the clean train1 dataset 70/30 into training and validating datasets. 
-The test1 dataset will not be used. The model will be applied to the final quiz 
-exercises.  
+The test1 dataset provided for the exercise will not be used until the end. 
+The model with the highest accuracy will be applied to the final quiz exercises.  
 ```{r}
 inTrain <- createDataPartition(y=train1$classe, p=0.7, list=FALSE)
 trainMod <- train1[inTrain,]
@@ -133,7 +123,6 @@ gbmConf <- confusionMatrix(gbmPred, factor(validMod$classe))
 gbmConf
 ```
 
-
 ### 4. Support Vector Machine - SVM
 ```{r}
 svmMod <- train(classe~., data=trainMod, method="svmLinear", trControl = control, tuneLength = 5, verbose = FALSE)
@@ -144,16 +133,18 @@ svmConf
 
 ### Accuracy Results
 
-| Model | Accuracy |
-|:-----:|:--------:|
-|RF     | 0.9947   |
-|GBM    | 0.9922   |
-|SVM    | 0.7721   |
-|Tree   | 0.5601   |
+| Model | Accuracy | OoS Error|
+|:-----:|:--------:|:---------|
+|RF     | 0.9947   |0.0053    |
+|GBM    | 0.9922   |0.0078    |
+|SVM    | 0.7721   |0.2279    |
+|Tree   | 0.5601   |0.43      |
+
+Quite visibly, Random Forest returned the best results with 0.9929 accuracy, 
+so we will use it to predict the outcome on the original test set = 'test'.
 
 ## Prediction on test set 
-Random Forest returned the best results with 0.9929 accuracy so we will use it
-to predict the outcome on the original test set = 'test'.
+
 ```{r}
 rfPred <- predict(rfMod, test)
 rfPred
