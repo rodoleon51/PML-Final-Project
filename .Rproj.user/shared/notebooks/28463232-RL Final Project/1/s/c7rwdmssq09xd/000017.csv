@@ -1,0 +1,2 @@
+"0","decTree <- train(classe~., data=trainMod, method=""rpart"", trControl = control, tuneLength = 5)"
+"0","fancyRpartPlot(decTree$finalModel)"

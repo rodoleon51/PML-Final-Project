@@ -1,0 +1,8 @@
+"0","nzv <- nearZeroVar(train1)"
+"0","train1 <- train1[,-nzv]"
+"0","dim(train1)"
+"1","[1]"
+"1"," 19622"
+"1","    59"
+"1","
+"

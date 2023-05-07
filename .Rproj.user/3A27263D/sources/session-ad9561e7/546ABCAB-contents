@@ -1,0 +1,108 @@
+---
+title: "Final Project"
+author: "Rodolfo Leon"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Environment preparation, install required packages
+```{r, message=FALSE}
+library(tidyverse)
+library(knitr)
+library(caret)  
+library(rpart)
+library(rpart.plot)
+library(randomForest)  
+library(mboost) 
+library(Amelia)  
+library(DT)
+library(rattle)
+```
+
+### Load Data and remove #DIV/0 and NA elements
+```{r}
+train <- read.csv("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-training.csv", 
+                          na.strings=c('#DIV/0', '', 'NA') ,stringsAsFactors = FALSE)
+test  <- read.csv("https://d396qusza40orc.cloudfront.net/predmachlearn/pml-testing.csv",
+                          na.strings= c('#DIV/0', '', 'NA'),stringsAsFactors = FALSE)
+```
+
+### Exploratory analysis
+```{r}
+#View(train)
+```
+
+```{r}
+dim(train)
+```
+
+#### Check for missing values and zero variance predictors
+```{r}
+missmap(train, main = "Missing values map - train")
+```
+
+```{r}
+cat("Total number of NA values =", sum(is.na(train)))
+```
+There is a substantial amount of missing data. These will be removed in the data cleaning section.
+
+#### Check for 0 variance predictors
+```{r}
+x = nearZeroVar(train, saveMetrics = TRUE)
+str(x, vec.len = 1)
+```
+
+There is a substantial amount of missing or uninformative data. These will be removed in the data cleaning section.
+
+ #### Split the dataset 70/30 and clean the data  
+ #### Check dimmensions before cleanup  
+```{r}
+inTrain  <- createDataPartition(train$classe, p=0.7, list=FALSE)
+trainingSet <- train[inTrain, ]
+testingSet <- train[-inTrain,]
+cat("Training Set dim = ")
+dim(trainingSet)
+cat("Testing Set dim = ")
+dim(testingSet)
+```
+
+#### 1) Remove variable columns not relevant to the study - cols 1-7
+
+
+#### 2) Remove NA elements
+```{r}
+noNA <- (colSums(is.na(trainingSet)) == 0)
+trainingSet <- trainingSet[, noNA]
+testingSet<- testingSet[, noNA]
+rm(noNA)
+cat("Dataset dimmensions after NA values removed \n")
+cat("Training Set dim = ")
+dim(trainingSet)
+cat("Testing Set dim = ")
+dim(testingSet)
+```
+
+#### 3) Remove Near Zero Variance
+```{r}
+rmNZV <- nearZeroVar(train1)
+train1 <- train1[, -rmNZV]
+cat("Dataset dimmensions after NZV values removed \n")
+cat("Training Set dim = ")
+dim(train1)
+```
+
+```{r}
+
+```
+
+#### Remove columns with data not relevant to the analysis - columns 1-6
+```{r}
+trainingSet <- trainingSet[7:]
+testingSet  <- testingSet[, -1:6]
+View(trainingSet)
+```
+

@@ -1,0 +1,28 @@
+{
+    "id": "89FFC33B",
+    "path": null,
+    "project_path": null,
+    "type": "object_explorer",
+    "hash": "0",
+    "contents": "",
+    "dirty": false,
+    "created": 1683402226990.0,
+    "source_on_save": false,
+    "relative_order": 3,
+    "properties": {
+        "id": "48776973660744389efa3cfdaa856e5b",
+        "name": "nzv",
+        "title": "nzv",
+        "language": "R",
+        "source_window_id": "",
+        "Source": "Source"
+    },
+    "folds": "",
+    "lastKnownWriteTime": 2187713872680,
+    "encoding": "",
+    "collab_server": "",
+    "source_window": "",
+    "last_content_update": 1683402226990,
+    "read_only": false,
+    "read_only_alternatives": []
+}

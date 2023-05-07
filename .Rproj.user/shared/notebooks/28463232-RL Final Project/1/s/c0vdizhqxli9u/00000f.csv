@@ -1,0 +1,3 @@
+"0","inTrain <- createDataPartition(y=train1$classe, p=0.7, list=FALSE)"
+"0","trainMod <- train1[inTrain,]"
+"0","validMod <- train1[-inTrain,]"

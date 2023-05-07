@@ -1,0 +1,8 @@
+"0","rmNA <- (colSums(is.na(train1)) == 0)"
+"0","train1 <- train1[, rmNA]"
+"0","dim(train1)"
+"1","[1]"
+"1"," 19622"
+"1","    60"
+"1","
+"
